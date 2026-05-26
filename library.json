@@ -1,0 +1,19 @@
+{
+  "name": "HttpDigestAuth",
+  "version": "0.1.0",
+  "description": "Thread-safe helper class for HTTP Digest Authentication.",
+  "keywords": ["http", "digest", "auth", "md5", "esp32"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soosp/HttpDigestAuth"
+  },
+  "authors": [
+    {
+      "name": "Péter Soós",
+      "url": "https://github.com/soosp"
+    }
+  ],
+  "license": "MIT",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}
