@@ -18,6 +18,26 @@ Stores the username, realm, password and the corresponding MD5 hash in the forma
 
 ## Installation
 
+### Arduino IDE
+
+**Install via Library Manager:**
+
+Search for **HttpDigestAuth** in the Library Manager (Sketch → Include Library → Manage Libraries).
+
+**Install manually:**
+
+1. Download this repository as a ZIP file
+2. In Arduino IDE: **Sketch → Include Library → Add .ZIP Library**
+
+### PlatformIO
+
+```ini
+lib_deps =
+    https://github.com/soosp/HttpDigestAuth
+```
+
+### Manual
+
 Copy the `HttpDigestAuth.h` file into your project or library folder.
 
 ## Usage
