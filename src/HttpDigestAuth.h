@@ -185,30 +185,33 @@ public:
    * @brief Converts auth data (user, realm and md5 hash) to JSON text.
    * @param json Destination buffer for JSON text.
    * @param len  Size of destination buffer
-   * @return true if the mutex was acquired, false on timeout
+   * @return true if the mutex was acquired,
+   *         false on timeout, or output truncated
    */
   bool toJson(char *json, size_t len) const {
     constexpr uint16_t bs = std::max({sizeof(_user), sizeof(_realm), sizeof(_md5)}) + 64;
     char buffer[bs];
+    bool ok = true;
 
     // JSON starts
-    snprintf(json, len, PSTR("{"));
+    json[0] = '\0';
+    ok &= _strncatJson(json, PSTR("{"), len);
     // Start using private variables
     if (!_lock()) return false;
     // Username
     snprintf(buffer, bs, PSTR("\"user\":\"%s\","), _user);
-    _strncatJson(json, buffer, len);
+    ok &= _strncatJson(json, buffer, len);
     // Realm
     snprintf(buffer, bs, PSTR("\"realm\":\"%s\","), _realm);
-    _strncatJson(json, buffer, len);
+    ok &= _strncatJson(json, buffer, len);
     // MD5
     snprintf(buffer, bs, PSTR("\"md5\":\"%s\""), _md5);
     // End of using private variables
     _unlock();
-    _strncatJson(json, buffer, len);
+    ok &= _strncatJson(json, buffer, len);
     // JSON ends
-    _strncatJson(json, PSTR("}"), len);
-    return true;
+    ok &= _strncatJson(json, PSTR("}"), len);
+    return ok;
   }
 
   /**
@@ -331,10 +334,23 @@ private:
     builder.getChars(md5);
   }
 
-  // Add the content of the buffer to the json string
-  static inline void _strncatJson(char *json, const char *buffer, size_t jsonLen) {
-    size_t remaining = (strlen(json) < jsonLen) ? (jsonLen - strlen(json) - 1) : 0;
-    strncat(json, buffer, remaining);
+  /**
+   * @brief Append @p buffer to @p json without exceeding @p jsonLen bytes.
+   *
+   * @param json     Destination JSON string (null-terminated).
+   * @param buffer   String to append.
+   * @param jsonLen  Total capacity of @p json in bytes.
+   * @return  @c true  — buffer written to JSON successfully
+   *          @c false — output truncated
+   */
+  static inline bool _strncatJson(char* json, const char* buffer, size_t jsonLen) {
+      size_t remaining = (strlen(json) < jsonLen)
+                        ? (jsonLen - strlen(json) - 1)
+                        : 0;
+      if (remaining == 0) return false;
+      size_t toAppend = strlen(buffer);
+      strncat(json, buffer, remaining);
+      return toAppend <= remaining;  // false if truncated
   }
 
   /** @brief Read-write mode for Preferences library */
