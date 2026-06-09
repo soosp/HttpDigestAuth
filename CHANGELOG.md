@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 - Add LICENSE file
 - Add more installation instructions
+- \_LEN / \_SIZE constants
 
 ### Changed
 

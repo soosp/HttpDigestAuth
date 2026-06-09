@@ -32,11 +32,17 @@ public:
 #else
   static constexpr size_t   JSON_LEN              = MAX_JSON_LEN;
 #endif
+  static constexpr size_t   JSON_SIZE             =   JSON_LEN + 1;
+
   // Maximum lengths for authentication fields (without null terminator)
   static constexpr size_t   MAX_USER_LEN          =   16;
+  static constexpr size_t   MAX_USER_SIZE         =   MAX_USER_LEN + 1;
   static constexpr size_t   MAX_PASSWORD_LEN      =   64;
+  static constexpr size_t   MAX_PASSWORD_SIZE     =   MAX_PASSWORD_LEN + 1;
   static constexpr size_t   MAX_REALM_LEN         =   64;
+  static constexpr size_t   MAX_REALM_SIZE        =   MAX_REALM_LEN + 1;
   static constexpr size_t   MD5_HASH_LEN          =   32;
+  static constexpr size_t   MD5_HASH_SIZE         =   MD5_HASH_LEN + 1;
   // Default timeout in miliseconds for mutex 
   static constexpr uint32_t DEFAULT_MUTEX_TIMEOUT = 1000;
 
@@ -65,16 +71,16 @@ public:
    *          information.
    */
   struct Credentials {
-    char user[MAX_USER_LEN  + 1];
-    char realm[MAX_REALM_LEN + 1];
-    char pw[MAX_PASSWORD_LEN + 1];
-    char md5[MD5_HASH_LEN  + 1];
+    char user[MAX_USER_SIZE];
+    char realm[MAX_REALM_SIZE];
+    char pw[MAX_PASSWORD_SIZE];
+    char md5[MD5_HASH_SIZE];
   };
 
   /** @brief Sets the password and updates the MD5 hash. */
   bool setPassword(const char* pw) {
     if (!_lock()) return false;
-    snprintf(_pw, MAX_PASSWORD_LEN + 1, "%s", pw);
+    snprintf(_pw, MAX_PASSWORD_SIZE, "%s", pw);
     _md5Hash(_md5, _user, _realm, _pw);
     _unlock();
     return true;
@@ -83,8 +89,8 @@ public:
   /** @brief Sets the username and password, then updates the MD5 hash. */
   bool setUserAndPassword(const char* user, const char* pw) {
     if (!_lock()) return false;
-    snprintf(_user, MAX_USER_LEN + 1, "%s", user);
-    snprintf(_pw, MAX_PASSWORD_LEN + 1, "%s", pw);
+    snprintf(_user, MAX_USER_SIZE, "%s", user);
+    snprintf(_pw, MAX_PASSWORD_SIZE, "%s", pw);
     _md5Hash(_md5, _user, _realm, _pw);
     _unlock();
     return true;
@@ -99,9 +105,9 @@ public:
    */
   bool setCredentials(const char* user, const char* realm, const char* pw) {
     if (!_lock()) return false;
-    snprintf(_user, MAX_USER_LEN + 1, "%s", user);
-    snprintf(_realm, MAX_REALM_LEN + 1, "%s", realm);
-    snprintf(_pw, MAX_PASSWORD_LEN + 1, "%s", pw);
+    snprintf(_user, MAX_USER_SIZE, "%s", user);
+    snprintf(_realm, MAX_REALM_SIZE, "%s", realm);
+    snprintf(_pw, MAX_PASSWORD_SIZE, "%s", pw);
     _md5Hash(_md5, _user, _realm, _pw);
     _unlock();
     return true;
@@ -116,9 +122,9 @@ public:
    */
   bool setCredentials(const Credentials cred) {
     if (!_lock()) return false;
-    snprintf(_user, MAX_USER_LEN + 1, "%s", cred.user);
-    snprintf(_realm, MAX_REALM_LEN + 1, "%s", cred.realm);
-    snprintf(_pw, MAX_PASSWORD_LEN + 1, "%s", cred.pw);
+    snprintf(_user, MAX_USER_SIZE, "%s", cred.user);
+    snprintf(_realm, MAX_REALM_SIZE, "%s", cred.realm);
+    snprintf(_pw, MAX_PASSWORD_SIZE, "%s", cred.pw);
     _md5Hash(_md5, _user, _realm, _pw);
     _unlock();
     return true;
@@ -141,7 +147,7 @@ public:
   /**
    * @brief Copies the MD5 hash into the caller-provided buffer.
    *        The hash is in the format: md5("user:realm:password")
-   * @param buf  Destination buffer (should be at least MD5_HASH_LEN + 1 bytes)
+   * @param buf  Destination buffer (should be at least MD5_HASH_SIZE bytes)
    * @param len  Size of destination buffer
    * @return true if the mutex was acquired, false on timeout
    */
@@ -154,7 +160,7 @@ public:
 
   /**
    * @brief Copies the Realm into the caller-provided buffer.
-   * @param buf  Destination buffer (should be at least MAX_REALM_LEN + 1 bytes)
+   * @param buf  Destination buffer (should be at least MAX_REALM_SIZE bytes)
    * @param len  Size of destination buffer
    * @return true if the mutex was acquired, false on timeout
    */
@@ -174,9 +180,9 @@ public:
    */
   bool getCredentials(Credentials& creds) const {
     if (!_lock()) return false;
-    snprintf(creds.user,  MAX_USER_LEN  + 1, "%s", _user);
-    snprintf(creds.realm, MAX_REALM_LEN + 1, "%s", _realm);
-    snprintf(creds.md5,   MD5_HASH_LEN  + 1, "%s", _md5);
+    snprintf(creds.user,  MAX_USER_SIZE,  "%s", _user);
+    snprintf(creds.realm, MAX_REALM_SIZE, "%s", _realm);
+    snprintf(creds.md5,   MD5_HASH_SIZE,  "%s", _md5);
     _unlock();
     return true;
   }
@@ -252,9 +258,9 @@ public:
       // Load already saved data
       retval = p.isKey(PSTR("isInitialized"));
       if (retval) {
-        p.getString(PSTR("user"), _user, MAX_USER_LEN + 1);
-        p.getString(PSTR("realm"), _realm, MAX_REALM_LEN + 1);
-        p.getString(PSTR("md5"), _md5, MD5_HASH_LEN + 1);
+        p.getString(PSTR("user"), _user, MAX_USER_SIZE);
+        p.getString(PSTR("realm"), _realm, MAX_REALM_SIZE);
+        p.getString(PSTR("md5"), _md5, MD5_HASH_SIZE);
       }
       p.end();
     }
@@ -291,10 +297,10 @@ private:
   mutable std::timed_mutex _mutex;
 #endif
 
-  char _user [MAX_USER_LEN     + 1];
-  char _realm[MAX_REALM_LEN    + 1];
-  char _md5  [MD5_HASH_LEN     + 1];
-  char _pw   [MAX_PASSWORD_LEN + 1];
+  char _user [MAX_USER_SIZE];
+  char _realm[MAX_REALM_SIZE];
+  char _md5  [MD5_HASH_SIZE];
+  char _pw   [MAX_PASSWORD_SIZE];
 
   /** @brief Tries to acquire the mutex. @return true on success, false on timeout. */
   bool _lock(uint32_t timeoutMs = DEFAULT_MUTEX_TIMEOUT) const {
@@ -319,14 +325,14 @@ private:
    *        This is the format required by HTTP Digest Authentication (RFC 7616).
    */
   void _md5Hash(char* md5, const char* user, const char* realm, const char* pw) {
-    constexpr size_t l = (MAX_USER_LEN + 1) + (MAX_REALM_LEN + 1) + (MAX_PASSWORD_LEN + 1);
+    constexpr size_t l = (MAX_USER_SIZE) + (MAX_REALM_SIZE) + (MAX_PASSWORD_SIZE);
     char s[l];
     snprintf(s, l, "%s:%s:%s", user, realm, pw);
     _md5Calc(s, md5);
   }
 
   /** @brief Computes the MD5 hash of str and stores it as a hex string in md5. */
-  void _md5Calc(const char* str, char md5[MD5_HASH_LEN + 1]) {
+  void _md5Calc(const char* str, char md5[MD5_HASH_SIZE]) {
     MD5Builder builder;
     builder.begin();
     builder.add(str);

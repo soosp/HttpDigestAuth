@@ -122,10 +122,15 @@ auth.toJson(json, sizeof(json));
 |Constant|Value|Description|
 |---|---|---|
 |`MAX_USER_LEN`|16|Maximum username length|
+|`MAX_USER_SIZE`|17|Buffer size for username including trailing zero|
 |`MAX_PASSWORD_LEN`|64|Maximum password length|
+|`MAX_PASSWORD_SIZE`|65|Buffer size for password including trailing zero|
 |`MAX_REALM_LEN`|64|Maximum realm length|
+|`MAX_REALM_SIZE`|65|Buffer size for realm including trailing zero|
 |`MD5_HASH_LEN`|32|MD5 hash length (hex string)|
+|`MD5_HASH_SIZE`|33|Buffer size for MD5 hash including trailing zero|
 |`JSON_LEN`|1024|Default JSON buffer size (overridable via `MAX_JSON_LEN`)|
+|`JSON_SIZE`|1025|Size of the JSON buffer including trailing zero|
 |`DEFAULT_MUTEX_TIMEOUT`|1000|Mutex timeout in milliseconds|
 
 ## Multiple instances
