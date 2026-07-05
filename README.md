@@ -158,8 +158,7 @@ cause an ODR violation (undefined behaviour).
   unit, so it holds **compiler flags**, not `#define`s (despite the `.h` name):
 
   ```txt
-  -DHOST_FQDN_LEN=63
-  -DHOST_DEFAULT_DNS_CACHE_TTL_MS=150000
+  -HTTP_DIGEST_AUTH_MAX_JSON_LEN=512
   ```
 
 > Defining a macro before the include in only your `.ino` affects **that file
