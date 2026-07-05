@@ -133,6 +133,39 @@ auth.toJson(json, sizeof(json));
 |`JSON_SIZE`|1025|Size of the JSON buffer including trailing zero|
 |`DEFAULT_MUTEX_TIMEOUT`|1000|Mutex timeout in milliseconds|
 
+## Configuration
+
+The default length of JSON buffer is overridable via the `MAX_JSON_LEN`
+preprocessor macro.
+
+### Where to define this
+
+The macro set **fixed buffer size**, so **every translation unit that
+includes a library header must see the same value**. In a single-file sketch,
+define it before the first `#include`. In a multi-file project it must be
+defined *globally* — otherwise the differing buffer sizes across `.cpp` files
+cause an ODR violation (undefined behaviour).
+
+- **PlatformIO** (all platforms) — in `platformio.ini`:
+
+  ```ini
+  build_flags =
+      -D MAX_JSON_LEN=512
+  ```
+
+- **Arduino IDE, ESP32** — add a file named `build_opt.h` in the sketch folder.
+  The core passes it to the compiler as a response file for **every** translation
+  unit, so it holds **compiler flags**, not `#define`s (despite the `.h` name):
+
+  ```txt
+  -DHOST_FQDN_LEN=63
+  -DHOST_DEFAULT_DNS_CACHE_TTL_MS=150000
+  ```
+
+> Defining a macro before the include in only your `.ino` affects **that file
+> only** — other `.cpp` files use the defaults. That mismatch is the multi-TU
+> pitfall the global methods above avoid.
+
 ## Multiple instances
 
 Each instance can use a separate storage namespace to avoid conflicts:

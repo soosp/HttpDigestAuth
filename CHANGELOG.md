@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Corrected macro configuration docs: a sketch-level `#define` has effect in
+  Arduino IDE, only if the project consists of a single translation unit
+  (`.ino`/`.cpp`). Documented the build-options methods and fixed the PlatformIO
+  build-flag syntax (`-D NAME=VALUE`).
+
 ## [0.2.0]
 
 ### Added
