@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - **API change:** Renamed `MAX_JSON_LEN` macro to `HTTP_DIGEST_AUTH_MAX_JSON_LEN`
   to avoid name conflicts.
+- Decreased the default length of JSON string to 256 bytes.
 
 ### Fixed
 

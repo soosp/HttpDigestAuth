@@ -129,8 +129,8 @@ auth.toJson(json, sizeof(json));
 |`MAX_REALM_SIZE`|65|Buffer size for realm including trailing zero|
 |`MD5_HASH_LEN`|32|MD5 hash length (hex string)|
 |`MD5_HASH_SIZE`|33|Buffer size for MD5 hash including trailing zero|
-|`JSON_LEN`|1024|Default JSON buffer size (overridable via `HTTP_DIGEST_AUTH_MAX_JSON_LEN`)|
-|`JSON_SIZE`|1025|Size of the JSON buffer including trailing zero|
+|`JSON_LEN`|256|Default JSON buffer size (overridable via `HTTP_DIGEST_AUTH_MAX_JSON_LEN`)|
+|`JSON_SIZE`|257|Size of the JSON buffer including trailing zero|
 |`DEFAULT_MUTEX_TIMEOUT`|1000|Mutex timeout in milliseconds|
 
 ## Configuration
