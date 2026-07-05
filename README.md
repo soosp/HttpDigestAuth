@@ -69,13 +69,13 @@ auth.setPassword("newpassword");
 ### Getting credentials
 
 ```cpp
-char user[HttpDigestAuth::MAX_USER_LEN + 1];
+char user[HttpDigestAuth::MAX_USER_SIZE];
 auth.getUser(user, sizeof(user));
 
-char hash[HttpDigestAuth::MD5_HASH_LEN + 1];
+char hash[HttpDigestAuth::MD5_HASH_SIZE];
 auth.getHash(hash, sizeof(hash));
 
-char realm[HttpDigestAuth::MAX_REALM_LEN + 1];
+char realm[HttpDigestAuth::MAX_REALM_SIZE];
 auth.getRealm(realm, sizeof(realm));
 
 HttpDigestAuth::Credentials creds;
@@ -113,7 +113,7 @@ auth.clear();
 ### JSON output
 
 ```cpp
-char json[HttpDigestAuth::JSON_LEN];
+char json[HttpDigestAuth::JSON_SIZE];
 auth.toJson(json, sizeof(json));
 // {"user":"admin","realm":"local","md5":"44880d12b5ed7d15aa3c2ffbb413b15c"}
 ```

@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
   (`.ino`/`.cpp`). Documented the build-options methods and fixed the PlatformIO
   build-flag syntax (`-D NAME=VALUE`).
 - Markdonwn fixes in documentation
+- Use `_SIZE` constants in the examples of `README.md`.
 
 ## [0.2.0]
 
