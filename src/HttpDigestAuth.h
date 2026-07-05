@@ -27,10 +27,10 @@
  */
 class HttpDigestAuth {
 public:
-#ifndef MAX_JSON_LEN
+#ifndef HTTP_DIGEST_AUTH_MAX_JSON_LEN
   static constexpr size_t   JSON_LEN              = 1024;
 #else
-  static constexpr size_t   JSON_LEN              = MAX_JSON_LEN;
+  static constexpr size_t   JSON_LEN              = HTTP_DIGEST_AUTH_MAX_JSON_LEN;
 #endif
   static constexpr size_t   JSON_SIZE             =   JSON_LEN + 1;
 

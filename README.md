@@ -129,13 +129,13 @@ auth.toJson(json, sizeof(json));
 |`MAX_REALM_SIZE`|65|Buffer size for realm including trailing zero|
 |`MD5_HASH_LEN`|32|MD5 hash length (hex string)|
 |`MD5_HASH_SIZE`|33|Buffer size for MD5 hash including trailing zero|
-|`JSON_LEN`|1024|Default JSON buffer size (overridable via `MAX_JSON_LEN`)|
+|`JSON_LEN`|1024|Default JSON buffer size (overridable via `HTTP_DIGEST_AUTH_MAX_JSON_LEN`)|
 |`JSON_SIZE`|1025|Size of the JSON buffer including trailing zero|
 |`DEFAULT_MUTEX_TIMEOUT`|1000|Mutex timeout in milliseconds|
 
 ## Configuration
 
-The default length of JSON buffer is overridable via the `MAX_JSON_LEN`
+The default length of JSON buffer is overridable via the `HTTP_DIGEST_AUTH_MAX_JSON_LEN`
 preprocessor macro.
 
 ### Where to define this
@@ -150,7 +150,7 @@ cause an ODR violation (undefined behaviour).
 
   ```ini
   build_flags =
-      -D MAX_JSON_LEN=512
+      -D HTTP_DIGEST_AUTH_MAX_JSON_LEN=512
   ```
 
 - **Arduino IDE, ESP32** — add a file named `build_opt.h` in the sketch folder.

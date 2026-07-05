@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **API change:** Renamed `MAX_JSON_LEN` macro to `HTTP_DIGEST_AUTH_MAX_JSON_LEN`
+  to avoid name conflicts.
+
 ### Fixed
 
 - Corrected macro configuration docs: a sketch-level `#define` has effect in
