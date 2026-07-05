@@ -32,17 +32,17 @@ public:
 #else
   static constexpr size_t   JSON_LEN              = HTTP_DIGEST_AUTH_MAX_JSON_LEN;
 #endif
-  static constexpr size_t   JSON_SIZE             =   JSON_LEN + 1;
+  static constexpr size_t   JSON_SIZE             = JSON_LEN + 1;
 
   // Maximum lengths for authentication fields (without null terminator)
-  static constexpr size_t   MAX_USER_LEN          =   16;
-  static constexpr size_t   MAX_USER_SIZE         =   MAX_USER_LEN + 1;
-  static constexpr size_t   MAX_PASSWORD_LEN      =   64;
-  static constexpr size_t   MAX_PASSWORD_SIZE     =   MAX_PASSWORD_LEN + 1;
-  static constexpr size_t   MAX_REALM_LEN         =   64;
-  static constexpr size_t   MAX_REALM_SIZE        =   MAX_REALM_LEN + 1;
-  static constexpr size_t   MD5_HASH_LEN          =   32;
-  static constexpr size_t   MD5_HASH_SIZE         =   MD5_HASH_LEN + 1;
+  static constexpr size_t   MAX_USER_LEN          = 16;
+  static constexpr size_t   MAX_USER_SIZE         = MAX_USER_LEN + 1;
+  static constexpr size_t   MAX_PASSWORD_LEN      = 64;
+  static constexpr size_t   MAX_PASSWORD_SIZE     = MAX_PASSWORD_LEN + 1;
+  static constexpr size_t   MAX_REALM_LEN         = 64;
+  static constexpr size_t   MAX_REALM_SIZE        = MAX_REALM_LEN + 1;
+  static constexpr size_t   MD5_HASH_LEN          = 32;
+  static constexpr size_t   MD5_HASH_SIZE         = MD5_HASH_LEN + 1;
   // Default timeout in miliseconds for mutex 
   static constexpr uint32_t DEFAULT_MUTEX_TIMEOUT = 1000;
 
