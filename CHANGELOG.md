@@ -6,8 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **API change:** Renamed `MAX_JSON_LEN` macro to `HTTP_DIGEST_AUTH_MAX_JSON_LEN`
-  to avoid name conflicts.
+- **API change:** Renamed `MAX_JSON_LEN` macro to
+  `HTTP_DIGEST_AUTH_MAX_JSON_LEN` to avoid name conflicts.
 - Decreased the default length of JSON string to 256 bytes.
 
 ### Fixed
@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
   Arduino IDE, only if the project consists of a single translation unit
   (`.ino`/`.cpp`). Documented the build-options methods and fixed the PlatformIO
   build-flag syntax (`-D NAME=VALUE`).
+- Markdonwn fixes in documentation
 
 ## [0.2.0]
 
@@ -23,7 +24,7 @@ All notable changes to this project will be documented in this file.
 
 - Add LICENSE file
 - Add more installation instructions
-- \_LEN / \_SIZE constants
+- `_LEN` / `_SIZE` constants
 
 ### Changed
 

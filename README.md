@@ -2,7 +2,8 @@
 
 Thread-safe helper class for HTTP Digest Authentication on ESP32.
 
-Stores the username, realm, password and the corresponding MD5 hash in the format required by HTTP Digest Auth: `md5("user:realm:password")`.
+Stores the username, realm, password and the corresponding MD5 hash in the
+format required by HTTP Digest Auth: `md5("user:realm:password")`.
 
 ## Features
 
@@ -154,8 +155,9 @@ cause an ODR violation (undefined behaviour).
   ```
 
 - **Arduino IDE, ESP32** — add a file named `build_opt.h` in the sketch folder.
-  The core passes it to the compiler as a response file for **every** translation
-  unit, so it holds **compiler flags**, not `#define`s (despite the `.h` name):
+  The core passes it to the compiler as a response file for **every**
+  translation unit, so it holds **compiler flags**, not `#define`s (despite the
+  `.h` name):
 
   ```txt
   -HTTP_DIGEST_AUTH_MAX_JSON_LEN=512
