@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Add ESP8266 support. ESP8266 Arcuino Core contains `MD5Builder` library,
+  and there is a third-party `Preferences` library can be used for persistent
+  storage: `vshymanskyy/Preferences`.
+
 ### Changed
 
 - **API change:** Renamed `MAX_JSON_LEN` macro to

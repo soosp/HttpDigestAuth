@@ -1,6 +1,7 @@
 #pragma once
-#ifdef ARDUINO_ARCH_ESP32
+
 #include "Arduino.h"
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
 #include <MD5Builder.h>
 #include <Preferences.h>
 #else
@@ -23,7 +24,7 @@
  *
  * Platform support:
  *   - ESP32 (FreeRTOS): uses SemaphoreHandle_t
- *   - Other platforms:  uses std::timed_mutex
+ *   - ESP8266: single-threaded, no mutex is needed
  */
 class HttpDigestAuth {
 public:
@@ -228,7 +229,7 @@ public:
   bool save(const char* ns = "auth") {
     bool retval = false;
     if (!_lock()) return false;
-#ifdef ARDUINO_ARCH_ESP32
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
     Preferences p;
     retval = p.begin(ns, _RW_MODE);
     if (retval) {
@@ -251,7 +252,7 @@ public:
   bool restore(const char* ns = "auth") {
     bool retval = false;
     if (!_lock()) return false;
-#ifdef ARDUINO_ARCH_ESP32
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
     Preferences p;
     retval = (p.begin(ns, _RO_MODE));
     if (retval) {
@@ -277,7 +278,7 @@ public:
   bool clear(const char* ns = "auth") {
     bool retval = false;
     if (!_lock()) return false;
-#ifdef ARDUINO_ARCH_ESP32
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
     Preferences p;
     retval = (p.begin(ns, _RW_MODE));
     if (retval) {
@@ -293,8 +294,6 @@ public:
 private:
 #ifdef ARDUINO_ARCH_ESP32
   mutable SemaphoreHandle_t _mutex;
-#else
-  mutable std::timed_mutex _mutex;
 #endif
 
   char _user [MAX_USER_SIZE];
@@ -302,21 +301,22 @@ private:
   char _md5  [MD5_HASH_SIZE];
   char _pw   [MAX_PASSWORD_SIZE];
 
+#ifdef ARDUINO_ARCH_ESP32
   /** @brief Tries to acquire the mutex. @return true on success, false on timeout. */
   bool _lock(uint32_t timeoutMs = DEFAULT_MUTEX_TIMEOUT) const {
-#ifdef ARDUINO_ARCH_ESP32
     return xSemaphoreTake(_mutex, pdMS_TO_TICKS(timeoutMs)) == pdTRUE;
-#else
-    return _mutex.try_lock_for(std::chrono::milliseconds(timeoutMs));
-#endif
   }
+#elif defined(ARDUINO_ARCH_ESP8266)
+  /** @brief No-op on ESP8266. @return true. */
+  bool _lock(uint32_t /*timeoutMs*/ = DEFAULT_MUTEX_TIMEOUT) const {
+    return true;
+  }
+#endif
 
   /** @brief Releases the mutex. */
   void _unlock() const {
 #ifdef ARDUINO_ARCH_ESP32
     xSemaphoreGive(_mutex);
-#else
-    _mutex.unlock();
 #endif
   }
 

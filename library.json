@@ -14,6 +14,13 @@
     }
   ],
   "license": "MIT",
+  "dependencies": [
+    {
+      "name": "vshymanskyy/Preferences",
+      "version": "^2.1.0",
+      "platforms": ["espressif8266"]
+    }
+  ],
   "frameworks": "arduino",
-  "platforms": "espressif32"
+  "platforms": ["espressif32", "espressif8266"]
 }
