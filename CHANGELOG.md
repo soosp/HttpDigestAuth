@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.1]
+
 ### Added
 
 - Add basic usage example.
@@ -56,7 +58,8 @@ All notable changes to this project will be documented in this file.
 
 - First public release
 
-[unreleased]: https://github.com/soosp/HttpDigestAuth/compare/0.3.0...HEAD
+[unreleased]: https://github.com/soosp/HttpDigestAuth/compare/0.3.1...HEAD
+[0.3.1]: https://github.com/soosp/HttpDigestAuth/releases/tag/0.3.0...0.3.1
 [0.3.0]: https://github.com/soosp/HttpDigestAuth/releases/tag/0.2.0...0.3.0
 [0.2.0]: https://github.com/soosp/HttpDigestAuth/releases/tag/0.1.0...0.2.0
 [0.1.0]: https://github.com/soosp/HttpDigestAuth/releases/tag/0.1.0

@@ -1,6 +1,6 @@
 {
   "name": "HttpDigestAuth",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Thread-safe helper class for HTTP Digest Authentication.",
   "keywords": ["http", "digest", "auth", "md5", "esp32"],
   "repository": {
