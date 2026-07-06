@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
   build-flag syntax (`-D NAME=VALUE`).
 - Markdonwn fixes in documentation
 - Use `_SIZE` constants in the examples of `README.md`.
+- Fix version URLs in Changelog.
 
 ## [0.2.0]
 
@@ -43,6 +44,6 @@ All notable changes to this project will be documented in this file.
 
 - First public release
 
-[unreleased]: https://github.com/soosp/RunningStatistics/compare/0.2.0...HEAD
-[0.2.0]: https://github.com/soosp/RunningStatistics/releases/tag/0.1.0...0.2.0
-[0.1.0]: https://github.com/soosp/RunningStatistics/releases/tag/0.1.0
+[unreleased]: https://github.com/soosp/HttpDigestAuth/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/soosp/HttpDigestAuth/releases/tag/0.1.0...0.2.0
+[0.1.0]: https://github.com/soosp/HttpDigestAuth/releases/tag/0.1.0
