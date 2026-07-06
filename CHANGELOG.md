@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Add ESP8266 support. ESP8266 Arcuino Core contains `MD5Builder` library,
+- Add ESP8266 support. ESP8266 Arduino Core contains `MD5Builder` library,
   and there is a third-party `Preferences` library can be used for persistent
   storage: `vshymanskyy/Preferences`.
 
