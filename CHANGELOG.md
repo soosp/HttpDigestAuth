@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Add AVR platform support. Needs `soosp/EEPROMPreferences` for persistent
+  storage and `akkoyun/MD5` for MD5 hash generation.
+
 ## [0.3.1]
 
 ### Added

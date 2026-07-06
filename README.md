@@ -1,6 +1,7 @@
 # HttpDigestAuth
 
-Thread-safe helper class for HTTP Digest Authentication on ESP32 and ESP8266.
+Thread-safe helper class for HTTP Digest Authentication on ESP32, ESP8266
+and AVR Arduino platforms.
 
 Stores the username, realm, password and the corresponding MD5 hash in the
 format required by HTTP Digest Auth: `md5("user:realm:password")`.
@@ -8,7 +9,7 @@ format required by HTTP Digest Auth: `md5("user:realm:password")`.
 ## Features
 
 - Thread-safe setter and getter methods (FreeRTOS mutex on ESP32)
-- Persistent storage via the `Preferences` library
+- Persistent storage via the `Preferences` or `EEPROMPreferences` library
 - Configurable storage namespace (supports multiple instances)
 - JSON serialization of credential data
 
@@ -24,6 +25,14 @@ format required by HTTP Digest Auth: `md5("user:realm:password")`.
 - ESP8266 Arduino Core
 - `MD5Builder` (included in ESP8266 Arduino Core)
 - [`vshymanskyy/Preferences`](https://github.com/vshymanskyy/Preferences) —
+  third-party library required for `save()`/`restore()`/`clear()`
+
+### AVR
+
+- AVR Arduino Core
+- [`akkoyun/MD5`](https://github.com/akkoyun/MD5) — third-party library
+  required for MD5 hash generation
+- [`soosp/EEPROMPreferences`](https://github.com/soosp/EEPROMPreferences) —
   third-party library required for `save()`/`restore()`/`clear()`
 
 ## Installation
@@ -195,7 +204,8 @@ user.save("auth_user");
 |---|---|---|
 |ESP32 (Arduino)|✅ Supported|Full support including persistent storage|
 |ESP8266 (Arduino)|✅ Supported|No mutex needed (single-threaded); persistent storage requires [`vshymanskyy/Preferences`](https://github.com/vshymanskyy/Preferences)|
-|Other platforms|🔧 TODO|Requires MD5, mutex, and storage implementation|
+|AVR (Arduino)|✅ Supported|No mutex needed (single-threaded); MD5 hash requires [akkoyun/MD5](https://github.com/akkoyun/MD5); persistent storage requires [`soosp/EEPROMPreferences`](https://github.com/soosp/EEPROMPreferences)|
+|Other platforms|🔧 TODO|Requires mutex, MD5 and storage implementation|
 
 ### ESP8266 persistent storage
 
@@ -207,7 +217,22 @@ lib_deps =
     vshymanskyy/Preferences
 ```
 
-For Arduino IDE, install `Preferences` via the Library Manager before using `save()`/`restore()`/`clear()`.
+For Arduino IDE, install `Preferences` via the Library Manager.
+
+### AVR MD5 and persistent storage
+
+Add the dependency to your `platformio.ini`:
+
+```ini
+lib_deps =
+    soosp/HttpDigestAuth
+    soosp/EEPROMPreferences
+    akkoyun/MD5
+```
+
+For Arduino IDE, install `EEPROMPreferences` via the Library Manager and
+install [`MD5`](https://github.com/akkoyun/MD5) by downloading ZIP file
+and extract it to the Arduino `libraries` directory.
 
 ## License
 

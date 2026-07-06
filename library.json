@@ -19,8 +19,18 @@
       "name": "vshymanskyy/Preferences",
       "version": "^2.1.0",
       "platforms": ["espressif8266"]
+    },
+    {
+      "name": "soosp/EEPROMPreferences",
+      "version": "^0.1.0",
+      "platforms": ["atmelavr"]
+    },
+    {
+      "name": "akkoyun/MD5",
+      "version": "^1.3.0",
+      "platforms": ["atmelavr"]
     }
   ],
   "frameworks": "arduino",
-  "platforms": ["espressif32", "espressif8266"]
+  "platforms": ["espressif32", "espressif8266", "atmelavr"]
 }

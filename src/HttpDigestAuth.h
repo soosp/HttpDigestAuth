@@ -2,8 +2,18 @@
 
 #include "Arduino.h"
 #if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-#include <MD5Builder.h>
-#include <Preferences.h>
+  // Use native MD5 implementation
+  #include <MD5Builder.h>
+  // Use NVS as persistent storage (native on ESP32, shymanskyy/Preferences
+  // on ESP8266)
+  #include <Preferences.h>
+  using Prefs = Preferences;
+#elif defined(ARDUINO_ARCH_AVR)
+  // Use akkoyun/MD5 implementation
+  #include <MD5.h>
+  // Use EEPROM as persistent storage
+  #include <EEPROMPreferences.h>
+  using Prefs = EEPROMPreferences;
 #else
 // TODO: provide platform-specific MD5, mutex and configuration saver
 //       implementation
@@ -27,6 +37,18 @@
  *   - ESP8266: single-threaded, no mutex is needed
  */
 class HttpDigestAuth {
+  class Helpers {
+    public:
+      /**
+       * @brief A helper template for replacing `std::max` for compatibility with
+       *        the AVR platform
+       */
+      template <typename T>
+      static constexpr T _max3(T a, T b, T c) {
+        return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+      }
+  };
+
 public:
 #ifndef HTTP_DIGEST_AUTH_MAX_JSON_LEN
   static constexpr size_t   JSON_LEN              = 256;
@@ -196,7 +218,7 @@ public:
    *         false on timeout, or output truncated
    */
   bool toJson(char *json, size_t len) const {
-    constexpr uint16_t bs = std::max({sizeof(_user), sizeof(_realm), sizeof(_md5)}) + 64;
+    constexpr uint16_t bs = Helpers::_max3(sizeof(_user), sizeof(_realm), sizeof(_md5)) + 64;
     char buffer[bs];
     bool ok = true;
 
@@ -229,8 +251,7 @@ public:
   bool save(const char* ns = "auth") {
     bool retval = false;
     if (!_lock()) return false;
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-    Preferences p;
+    Prefs p;
     retval = p.begin(ns, _RW_MODE);
     if (retval) {
       retval &= (p.putString("user", _user) > 0) ;
@@ -239,7 +260,6 @@ public:
       retval &= (p.putBool("isInitialized", true) > 0);
       p.end();
     }
-#endif
     _unlock();
     return retval;
   }
@@ -252,8 +272,7 @@ public:
   bool restore(const char* ns = "auth") {
     bool retval = false;
     if (!_lock()) return false;
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-    Preferences p;
+    Prefs p;
     retval = (p.begin(ns, _RO_MODE));
     if (retval) {
       // Load already saved data
@@ -265,7 +284,6 @@ public:
       }
       p.end();
     }
-#endif
     _unlock();
     return retval;
   }
@@ -278,14 +296,12 @@ public:
   bool clear(const char* ns = "auth") {
     bool retval = false;
     if (!_lock()) return false;
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-    Preferences p;
+    Prefs p;
     retval = (p.begin(ns, _RW_MODE));
     if (retval) {
       p.clear();
       p.end();
     }
-#endif
     _unlock();
     return retval;
   }
@@ -306,7 +322,7 @@ private:
   bool _lock(uint32_t timeoutMs = DEFAULT_MUTEX_TIMEOUT) const {
     return xSemaphoreTake(_mutex, pdMS_TO_TICKS(timeoutMs)) == pdTRUE;
   }
-#elif defined(ARDUINO_ARCH_ESP8266)
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR)
   /** @brief No-op on ESP8266. @return true. */
   bool _lock(uint32_t /*timeoutMs*/ = DEFAULT_MUTEX_TIMEOUT) const {
     return true;
@@ -333,13 +349,18 @@ private:
 
   /** @brief Computes the MD5 hash of str and stores it as a hex string in md5. */
   void _md5Calc(const char* str, char md5[MD5_HASH_SIZE]) {
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
     MD5Builder builder;
     builder.begin();
     builder.add(str);
     builder.calculate();
     builder.getChars(md5);
+#elif defined(ARDUINO_ARCH_AVR)
+    uint8_t hash[16];
+    MD5::Hash(str, hash);    // one-shot, stack-only, 0 heap
+    MD5::Digest(hash, md5);  // hash[16] -> hex string[33]
+#endif
   }
-
   /**
    * @brief Append @p buffer to @p json without exceeding @p jsonLen bytes.
    *

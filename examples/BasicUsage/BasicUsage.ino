@@ -33,11 +33,11 @@ void printCredentials(const char* label) {
   auth.getHash(hash, sizeof(hash));
   auth.toJson(json, sizeof(json));
 
-  Serial.printf("\n--- %s ---\n", label);
-  Serial.printf("User:  %s\n", user);
-  Serial.printf("Realm: %s\n", realm);
-  Serial.printf("Hash:  %s\n", hash);
-  Serial.printf("JSON:  %s\n", json);
+  Serial.print("\n--- "); Serial.println(label); Serial.println(" ---");
+  Serial.print("User:  "); Serial.println(user);
+  Serial.print("Realm: "); Serial.println(realm);
+  Serial.print("Hash:  "); Serial.println(hash);
+  Serial.print("JSON:  "); Serial.println(json);
 }
 
 void setup() {
@@ -46,7 +46,7 @@ void setup() {
 
   // 1. Default credentials: admin / local / admin
   printCredentials("Default credentials");
-  Serial.printf("\nExpected hash: %s\n", EXPECTED_HASH1);
+  Serial.print("\nExpected hash: "); Serial.println(EXPECTED_HASH1);
 
   // 2. Save to flash, then change credentials in memory
   if (!auth.save()) {
@@ -54,13 +54,13 @@ void setup() {
   } else {
     auth.setCredentials("user2", "myrealm", "password2");
     printCredentials("After setCredentials()");
-    Serial.printf("\nExpected hash: %s\n", EXPECTED_HASH2);
+    Serial.print("\nExpected hash: "); Serial.println(EXPECTED_HASH2);
     // 3. Restore from flash – should match the default credentials again
     if (!auth.restore()) {
         Serial.println("\nRestore from flash has failed.");
     } else {
         printCredentials("After restore()");
-        Serial.printf("\nExpected hash: %s\n", EXPECTED_HASH1);
+        Serial.print("\nExpected hash: "); Serial.println(EXPECTED_HASH1);
 
         char hash[HttpDigestAuth::MD5_HASH_SIZE];
         auth.getHash(hash, sizeof(hash));
