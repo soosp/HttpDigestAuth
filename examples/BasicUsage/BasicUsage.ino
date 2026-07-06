@@ -1,0 +1,83 @@
+/**
+ * BasicUsage.ino - HttpDigestAuth library example
+ *
+ * Demonstrates basic usage of the HttpDigestAuth library:
+ *   - Default and custom credentials
+ *   - Saving and restoring credentials to/from flash
+ *   - Verifying the restored hash against the expected value
+ *   - JSON output
+ *   - Clearing saved data from flash
+ *
+ * Expected serial output at 115200 baud.
+ */
+
+#include <HttpDigestAuth.h>
+
+// Expected hash for default credentials: admin:local:admin
+// Can be verified at: https://www.md5hashgenerator.com
+// Input: "admin:local:admin"
+const char* EXPECTED_HASH1 = "44880d12b5ed7d15aa3c2ffbb413b15c";
+// Input: "user2:myrealm:password2"
+const char* EXPECTED_HASH2 = "8f841b00b45e47178700c1ec48d4a14f";
+
+HttpDigestAuth auth;
+
+void printCredentials(const char* label) {
+  char user[HttpDigestAuth::MAX_USER_SIZE];
+  char realm[HttpDigestAuth::MAX_REALM_SIZE];
+  char hash[HttpDigestAuth::MD5_HASH_SIZE];
+  char json[HttpDigestAuth::JSON_SIZE];
+
+  auth.getUser(user, sizeof(user));
+  auth.getRealm(realm, sizeof(realm));
+  auth.getHash(hash, sizeof(hash));
+  auth.toJson(json, sizeof(json));
+
+  Serial.printf("\n--- %s ---\n", label);
+  Serial.printf("User:  %s\n", user);
+  Serial.printf("Realm: %s\n", realm);
+  Serial.printf("Hash:  %s\n", hash);
+  Serial.printf("JSON:  %s\n", json);
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 1. Default credentials: admin / local / admin
+  printCredentials("Default credentials");
+  Serial.printf("\nExpected hash: %s\n", EXPECTED_HASH1);
+
+  // 2. Save to flash, then change credentials in memory
+  if (!auth.save()) {
+    Serial.println("\nSave to flash has failed.");
+  } else {
+    auth.setCredentials("user2", "myrealm", "password2");
+    printCredentials("After setCredentials()");
+    Serial.printf("\nExpected hash: %s\n", EXPECTED_HASH2);
+    // 3. Restore from flash – should match the default credentials again
+    if (!auth.restore()) {
+        Serial.println("\nRestore from flash has failed.");
+    } else {
+        printCredentials("After restore()");
+        Serial.printf("\nExpected hash: %s\n", EXPECTED_HASH1);
+
+        char hash[HttpDigestAuth::MD5_HASH_SIZE];
+        auth.getHash(hash, sizeof(hash));
+        if (strcmp(hash, EXPECTED_HASH1) == 0) {
+          Serial.println("\nRestore OK: hash matches expected value.");
+        } else {
+          Serial.println("\nRestore FAILED: hash does not match expected value!");
+        }
+    }
+  }
+
+  // 4. Clean up: remove saved data from flash
+  if (auth.clear()) {
+    Serial.println("\nFlash cleared.");
+  } else {
+    Serial.println("\nFlash clearing failed.");
+  }
+}
+
+void loop() {}

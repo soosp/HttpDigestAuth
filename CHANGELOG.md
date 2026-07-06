@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Add basic usage example.
+
 ## [0.3.0]
 
 ### Added
