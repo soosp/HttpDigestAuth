@@ -1,6 +1,6 @@
 # HttpDigestAuth
 
-Thread-safe helper class for HTTP Digest Authentication on ESP32.
+Thread-safe helper class for HTTP Digest Authentication on ESP32 and ESP8266.
 
 Stores the username, realm, password and the corresponding MD5 hash in the
 format required by HTTP Digest Auth: `md5("user:realm:password")`.
@@ -8,14 +8,23 @@ format required by HTTP Digest Auth: `md5("user:realm:password")`.
 ## Features
 
 - Thread-safe setter and getter methods (FreeRTOS mutex on ESP32)
-- Persistent storage via the ESP32 `Preferences` library
+- Persistent storage via the `Preferences` library
 - Configurable storage namespace (supports multiple instances)
 - JSON serialization of credential data
 
 ## Requirements
 
+### ESP32
+
 - ESP32 Arduino Core
 - `MD5Builder` and `Preferences` (both included in ESP32 Arduino Core)
+
+### ESP8266
+
+- ESP8266 Arduino Core
+- `MD5Builder` (included in ESP8266 Arduino Core)
+- [`vshymanskyy/Preferences`](https://github.com/vshymanskyy/Preferences) —
+  third-party library required for `save()`/`restore()`/`clear()`
 
 ## Installation
 
@@ -181,10 +190,23 @@ user.save("auth_user");
 
 ## Platform support
 
-|Platform|Status|
-|---|---|
-|ESP32 (Arduino)|✅ Supported|
-|Other platforms|🔧 TODO (requires MD5, mutex, and storage implementation)|
+|Platform|Status|Notes|
+|---|---|---|
+|ESP32 (Arduino)|✅ Supported|Full support including persistent storage|
+|ESP8266 (Arduino)|✅ Supported|No mutex needed (single-threaded); persistent storage requires [`vshymanskyy/Preferences`](https://github.com/vshymanskyy/Preferences)|
+|Other platforms|🔧 TODO|Requires MD5, mutex, and storage implementation|
+
+### ESP8266 persistent storage
+
+Add the dependency to your `platformio.ini`:
+
+```ini
+lib_deps =
+    https://github.com/soosp/HttpDigestAuth
+    vshymanskyy/Preferences
+```
+
+For Arduino IDE, install `Preferences` via the Library Manager before using `save()`/`restore()`/`clear()`.
 
 ## License
 
