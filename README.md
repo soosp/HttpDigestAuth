@@ -32,7 +32,8 @@ format required by HTTP Digest Auth: `md5("user:realm:password")`.
 
 **Install via Library Manager:**
 
-Search for **HttpDigestAuth** in the Library Manager (Sketch → Include Library → Manage Libraries).
+Search for **HttpDigestAuth** in the Library Manager (Sketch → Include Library
+→ Manage Libraries).
 
 **Install manually:**
 
