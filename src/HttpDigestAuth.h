@@ -202,22 +202,22 @@ public:
 
     // JSON starts
     json[0] = '\0';
-    ok &= _strncatJson(json, PSTR("{"), len);
+    ok &= _strncatJson(json, "{", len);
     // Start using private variables
     if (!_lock()) return false;
     // Username
-    snprintf(buffer, bs, PSTR("\"user\":\"%s\","), _user);
+    snprintf(buffer, bs, "\"user\":\"%s\",", _user);
     ok &= _strncatJson(json, buffer, len);
     // Realm
-    snprintf(buffer, bs, PSTR("\"realm\":\"%s\","), _realm);
+    snprintf(buffer, bs, "\"realm\":\"%s\",", _realm);
     ok &= _strncatJson(json, buffer, len);
     // MD5
-    snprintf(buffer, bs, PSTR("\"md5\":\"%s\""), _md5);
+    snprintf(buffer, bs, "\"md5\":\"%s\"", _md5);
     // End of using private variables
     _unlock();
     ok &= _strncatJson(json, buffer, len);
     // JSON ends
-    ok &= _strncatJson(json, PSTR("}"), len);
+    ok &= _strncatJson(json, "}", len);
     return ok;
   }
 
@@ -233,10 +233,10 @@ public:
     Preferences p;
     retval = p.begin(ns, _RW_MODE);
     if (retval) {
-      retval &= (p.putString(PSTR("user"), _user) > 0) ;
-      retval &= (p.putString(PSTR("realm"), _realm) > 0);
-      retval &= (p.putString(PSTR("md5"), _md5) > 0);
-      retval &= (p.putBool(PSTR("isInitialized"), true) > 0);
+      retval &= (p.putString("user", _user) > 0) ;
+      retval &= (p.putString("realm", _realm) > 0);
+      retval &= (p.putString("md5", _md5) > 0);
+      retval &= (p.putBool("isInitialized", true) > 0);
       p.end();
     }
 #endif
@@ -257,11 +257,11 @@ public:
     retval = (p.begin(ns, _RO_MODE));
     if (retval) {
       // Load already saved data
-      retval = p.isKey(PSTR("isInitialized"));
+      retval = p.isKey("isInitialized");
       if (retval) {
-        p.getString(PSTR("user"), _user, MAX_USER_SIZE);
-        p.getString(PSTR("realm"), _realm, MAX_REALM_SIZE);
-        p.getString(PSTR("md5"), _md5, MD5_HASH_SIZE);
+        p.getString("user", _user, MAX_USER_SIZE);
+        p.getString("realm", _realm, MAX_REALM_SIZE);
+        p.getString("md5", _md5, MD5_HASH_SIZE);
       }
       p.end();
     }

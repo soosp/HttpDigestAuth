@@ -8,6 +8,11 @@ All notable changes to this project will be documented in this file.
 
 - Add basic usage example.
 
+### Fixed
+
+- Remove `PSTR()` macros from `snprintf()` and `Preferences` calls to avoid
+  ESP8266 to crash.
+
 ## [0.3.0]
 
 ### Added
