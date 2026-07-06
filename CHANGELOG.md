@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - Markdonwn fixes in documentation
 - Use `_SIZE` constants in the examples of `README.md`.
 - Fix version URLs in Changelog.
+- Fix library dependency entries in `README.md`.
 
 ## [0.2.0]
 

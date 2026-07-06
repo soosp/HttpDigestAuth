@@ -44,7 +44,7 @@ Search for **HttpDigestAuth** in the Library Manager (Sketch → Include Library
 
 ```ini
 lib_deps =
-    https://github.com/soosp/HttpDigestAuth
+    soosp/HttpDigestAuth
 ```
 
 ### Manual
@@ -203,7 +203,7 @@ Add the dependency to your `platformio.ini`:
 
 ```ini
 lib_deps =
-    https://github.com/soosp/HttpDigestAuth
+    soosp/HttpDigestAuth
     vshymanskyy/Preferences
 ```
 
