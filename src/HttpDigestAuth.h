@@ -50,24 +50,46 @@ class HttpDigestAuth {
   };
 
 public:
-#ifndef HTTP_DIGEST_AUTH_MAX_JSON_LEN
-  static constexpr size_t   JSON_LEN              = 256;
+  // Maximum lengths for authentication fields (without null terminator).
+  // Each length is overridable via a preprocessor macro (see README).
+#ifndef HTTP_DIGEST_AUTH_MAX_USER_LEN
+  static constexpr size_t   MAX_USER_LEN      = 16;
 #else
-  static constexpr size_t   JSON_LEN              = HTTP_DIGEST_AUTH_MAX_JSON_LEN;
+  static constexpr size_t   MAX_USER_LEN      = HTTP_DIGEST_AUTH_MAX_USER_LEN;
 #endif
-  static constexpr size_t   JSON_SIZE             = JSON_LEN + 1;
+  static constexpr size_t   MAX_USER_SIZE     = MAX_USER_LEN + 1;
 
-  // Maximum lengths for authentication fields (without null terminator)
-  static constexpr size_t   MAX_USER_LEN          = 16;
-  static constexpr size_t   MAX_USER_SIZE         = MAX_USER_LEN + 1;
-  static constexpr size_t   MAX_PASSWORD_LEN      = 64;
-  static constexpr size_t   MAX_PASSWORD_SIZE     = MAX_PASSWORD_LEN + 1;
-  static constexpr size_t   MAX_REALM_LEN         = 64;
-  static constexpr size_t   MAX_REALM_SIZE        = MAX_REALM_LEN + 1;
-  static constexpr size_t   MD5_HASH_LEN          = 32;
-  static constexpr size_t   MD5_HASH_SIZE         = MD5_HASH_LEN + 1;
-  // Default timeout in miliseconds for mutex 
-  static constexpr uint32_t DEFAULT_MUTEX_TIMEOUT = 1000;
+#ifndef HTTP_DIGEST_AUTH_MAX_PASSWORD_LEN
+  static constexpr size_t   MAX_PASSWORD_LEN  = 64;
+#else
+  static constexpr size_t   MAX_PASSWORD_LEN  = HTTP_DIGEST_AUTH_MAX_PASSWORD_LEN;
+#endif
+  static constexpr size_t   MAX_PASSWORD_SIZE = MAX_PASSWORD_LEN + 1;
+
+#ifndef HTTP_DIGEST_AUTH_MAX_REALM_LEN
+  static constexpr size_t   MAX_REALM_LEN     = 64;
+#else
+  static constexpr size_t   MAX_REALM_LEN     = HTTP_DIGEST_AUTH_MAX_REALM_LEN;
+#endif
+  static constexpr size_t   MAX_REALM_SIZE    = MAX_REALM_LEN + 1;
+
+#ifndef HTTP_DIGEST_AUTH_MUTEX_TIMEOUT
+  static constexpr uint32_t MUTEX_TIMEOUT     = 1000;
+#else 
+  static constexpr uint32_t MUTEX_TIMEOUT     = HTTP_DIGEST_AUTH_MUTEX_TIMEOUT;
+#endif
+
+  static constexpr size_t   MD5_HASH_LEN      = 32;
+  static constexpr size_t   MD5_HASH_SIZE     = MD5_HASH_LEN + 1;
+
+  // JSON length is computed from the field lengths plus the structural
+  // overhead of the JSON output, with some reserve. Not user-configurable.
+  // Format: {"user":"...","realm":"...","md5":"..."}
+  //   fixed structural characters: 31, reserve: JSON_RESERVE
+  static constexpr size_t   JSON_RESERVE      = 16;
+  static constexpr size_t   JSON_LEN          = MAX_USER_LEN + MAX_REALM_LEN
+                                                + MD5_HASH_LEN + 31 + JSON_RESERVE;
+  static constexpr size_t   JSON_SIZE         = JSON_LEN + 1;
 
   /**
    * @brief Default constructor. Initializes with admin/local/admin credentials.
@@ -218,7 +240,7 @@ public:
    *         false on timeout, or output truncated
    */
   bool toJson(char *json, size_t len) const {
-    constexpr uint16_t bs = Helpers::_max3(sizeof(_user), sizeof(_realm), sizeof(_md5)) + 64;
+    constexpr uint16_t bs = Helpers::_max3(MAX_USER_SIZE, MAX_REALM_SIZE, MD5_HASH_SIZE) + 64;
     char buffer[bs];
     bool ok = true;
 
@@ -319,12 +341,12 @@ private:
 
 #ifdef ARDUINO_ARCH_ESP32
   /** @brief Tries to acquire the mutex. @return true on success, false on timeout. */
-  bool _lock(uint32_t timeoutMs = DEFAULT_MUTEX_TIMEOUT) const {
+  bool _lock(uint32_t timeoutMs = MUTEX_TIMEOUT) const {
     return xSemaphoreTake(_mutex, pdMS_TO_TICKS(timeoutMs)) == pdTRUE;
   }
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR)
-  /** @brief No-op on ESP8266. @return true. */
-  bool _lock(uint32_t /*timeoutMs*/ = DEFAULT_MUTEX_TIMEOUT) const {
+  /** @brief No-op on ESP8266 and AVR. @return true. */
+  bool _lock(uint32_t /*timeoutMs*/ = MUTEX_TIMEOUT) const {
     return true;
   }
 #endif

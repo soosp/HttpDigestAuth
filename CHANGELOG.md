@@ -8,6 +8,16 @@ All notable changes to this project will be documented in this file.
 
 - Add AVR platform support. Needs `soosp/EEPROMPreferences` for persistent
   storage and `akkoyun/MD5` for MD5 hash generation.
+- Make user, password and realm buffer lengths configurable via the
+  `HTTP_DIGEST_AUTH_MAX_USER_LEN`, `HTTP_DIGEST_AUTH_MAX_PASSWORD_LEN` and
+  `HTTP_DIGEST_AUTH_MAX_REALM_LEN` macros.
+- Mutex timeout is configurable via the `HTTP_DIGEST_AUTH_MUTEX_TIMEOUT` macro.
+
+### Changed
+
+- **API change:** `JSON_LEN` is now computed from the field lengths plus a
+  structural overhead and reserve, instead of being configured directly.
+  Removed the `HTTP_DIGEST_AUTH_MAX_JSON_LEN` macro.
 
 ## [0.3.1]
 
