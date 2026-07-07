@@ -11,54 +11,44 @@ format required by HTTP Digest Auth: `md5("user:realm:password")`.
 - Thread-safe setter and getter methods (FreeRTOS mutex on ESP32)
 - Persistent storage via the `Preferences` or `EEPROMPreferences` library
 - Configurable storage namespace (supports multiple instances)
+- Configurable field buffer sizes
 - JSON serialization of credential data
 
-## Requirements
+## Platform support
 
-### ESP32
+Each platform relies on its own MD5 and persistent-storage backend. The
+third-party libraries below are pulled in automatically by PlatformIO (see
+Installation); for the Arduino IDE they must be installed manually.
 
-- ESP32 Arduino Core
-- `MD5Builder` and `Preferences` (both included in ESP32 Arduino Core)
-
-### ESP8266
-
-- ESP8266 Arduino Core
-- `MD5Builder` (included in ESP8266 Arduino Core)
-- [`vshymanskyy/Preferences`](https://github.com/vshymanskyy/Preferences) —
-  third-party library required for `save()`/`restore()`/`clear()`
-
-### AVR
-
-- AVR Arduino Core
-- [`akkoyun/MD5`](https://github.com/akkoyun/MD5) — third-party library
-  required for MD5 hash generation
-- [`soosp/EEPROMPreferences`](https://github.com/soosp/EEPROMPreferences) —
-  third-party library required for `save()`/`restore()`/`clear()`
+|Platform|Status|MD5|Persistent storage|Thread safety|
+|---|---|---|---|---|
+|ESP32|✅|`MD5Builder` (core)|`Preferences` (core)|FreeRTOS mutex|
+|ESP8266|✅|`MD5Builder` (core)|[`vshymanskyy/Preferences`](https://github.com/vshymanskyy/Preferences)|single-threaded, no mutex|
+|AVR|✅|[`akkoyun/MD5`](https://github.com/akkoyun/MD5)|[`soosp/EEPROMPreferences`](https://github.com/soosp/EEPROMPreferences)|single-threaded, no mutex|
+|Other|🔧 TODO|—|—|—|
 
 ## Installation
 
-### Arduino IDE
-
-**Install via Library Manager:**
-
-Search for **HttpDigestAuth** in the Library Manager (Sketch → Include Library
-→ Manage Libraries).
-
-**Install manually:**
-
-1. Download this repository as a ZIP file
-2. In Arduino IDE: **Sketch → Include Library → Add .ZIP Library**
-
 ### PlatformIO
+
+Add the library to `platformio.ini`. The platform-specific dependencies
+(MD5 and storage backends) are resolved automatically from `library.json`:
 
 ```ini
 lib_deps =
     soosp/HttpDigestAuth
 ```
 
-### Manual
+### Arduino IDE
 
-Copy the `HttpDigestAuth.h` file into your project or library folder.
+Install **HttpDigestAuth** via the Library Manager (Sketch → Include Library
+→ Manage Libraries), or download this repository as a ZIP and use
+**Sketch → Include Library → Add .ZIP Library**.
+
+The Arduino IDE does not resolve platform-specific dependencies automatically,
+so install the third-party libraries for your target platform manually (see
+the Platform support table above). Libraries not available in the Library
+Manager can be added from their GitHub ZIP.
 
 ## Usage
 
@@ -137,55 +127,6 @@ auth.toJson(json, sizeof(json));
 // {"user":"admin","realm":"local","md5":"44880d12b5ed7d15aa3c2ffbb413b15c"}
 ```
 
-## Constants
-
-|Constant|Value|Description|
-|---|---|---|
-|`MAX_USER_LEN`|16|Maximum username length|
-|`MAX_USER_SIZE`|17|Buffer size for username including trailing zero|
-|`MAX_PASSWORD_LEN`|64|Maximum password length|
-|`MAX_PASSWORD_SIZE`|65|Buffer size for password including trailing zero|
-|`MAX_REALM_LEN`|64|Maximum realm length|
-|`MAX_REALM_SIZE`|65|Buffer size for realm including trailing zero|
-|`MD5_HASH_LEN`|32|MD5 hash length (hex string)|
-|`MD5_HASH_SIZE`|33|Buffer size for MD5 hash including trailing zero|
-|`JSON_LEN`|256|Default JSON buffer size (overridable via `HTTP_DIGEST_AUTH_MAX_JSON_LEN`)|
-|`JSON_SIZE`|257|Size of the JSON buffer including trailing zero|
-|`DEFAULT_MUTEX_TIMEOUT`|1000|Mutex timeout in milliseconds|
-
-## Configuration
-
-The default length of JSON buffer is overridable via the `HTTP_DIGEST_AUTH_MAX_JSON_LEN`
-preprocessor macro.
-
-### Where to define this
-
-The macro set **fixed buffer size**, so **every translation unit that
-includes a library header must see the same value**. In a single-file sketch,
-define it before the first `#include`. In a multi-file project it must be
-defined *globally* — otherwise the differing buffer sizes across `.cpp` files
-cause an ODR violation (undefined behaviour).
-
-- **PlatformIO** (all platforms) — in `platformio.ini`:
-
-  ```ini
-  build_flags =
-      -D HTTP_DIGEST_AUTH_MAX_JSON_LEN=512
-  ```
-
-- **Arduino IDE, ESP32** — add a file named `build_opt.h` in the sketch folder.
-  The core passes it to the compiler as a response file for **every**
-  translation unit, so it holds **compiler flags**, not `#define`s (despite the
-  `.h` name):
-
-  ```txt
-  -HTTP_DIGEST_AUTH_MAX_JSON_LEN=512
-  ```
-
-> Defining a macro before the include in only your `.ino` affects **that file
-> only** — other `.cpp` files use the defaults. That mismatch is the multi-TU
-> pitfall the global methods above avoid.
-
 ## Multiple instances
 
 Each instance can use a separate storage namespace to avoid conflicts:
@@ -198,41 +139,78 @@ admin.save("auth_admin");
 user.save("auth_user");
 ```
 
-## Platform support
+## Constants
 
-|Platform|Status|Notes|
+|Constant|Default|Description|
 |---|---|---|
-|ESP32 (Arduino)|✅ Supported|Full support including persistent storage|
-|ESP8266 (Arduino)|✅ Supported|No mutex needed (single-threaded); persistent storage requires [`vshymanskyy/Preferences`](https://github.com/vshymanskyy/Preferences)|
-|AVR (Arduino)|✅ Supported|No mutex needed (single-threaded); MD5 hash requires [akkoyun/MD5](https://github.com/akkoyun/MD5); persistent storage requires [`soosp/EEPROMPreferences`](https://github.com/soosp/EEPROMPreferences)|
-|Other platforms|🔧 TODO|Requires mutex, MD5 and storage implementation|
+|`MAX_USER_LEN`|16|Maximum username length|
+|`MAX_USER_SIZE`|17|Buffer size for username including trailing zero|
+|`MAX_PASSWORD_LEN`|64|Maximum password length|
+|`MAX_PASSWORD_SIZE`|65|Buffer size for password including trailing zero|
+|`MAX_REALM_LEN`|64|Maximum realm length|
+|`MAX_REALM_SIZE`|65|Buffer size for realm including trailing zero|
+|`MD5_HASH_LEN`|32|MD5 hash length (hex string)|
+|`MD5_HASH_SIZE`|33|Buffer size for MD5 hash including trailing zero|
+|`JSON_LEN`|159|JSON string length, computed from the field lengths|
+|`JSON_SIZE`|160|Buffer size for the JSON string including trailing zero|
+|`MUTEX_TIMEOUT`|1000|Mutex timeout in milliseconds|
 
-### ESP8266 persistent storage
+## Configuration
 
-Add the dependency to your `platformio.ini`:
+The mutex timeout, user, password and realm buffer lengths are overridable
+via preprocessor macros:
 
-```ini
-lib_deps =
-    soosp/HttpDigestAuth
-    vshymanskyy/Preferences
-```
+|Macro|Default|
+|---|---|
+|`HTTP_DIGEST_AUTH_MUTEX_TIMEOUT`|1000|
+|`HTTP_DIGEST_AUTH_MAX_USER_LEN`|16|
+|`HTTP_DIGEST_AUTH_MAX_PASSWORD_LEN`|64|
+|`HTTP_DIGEST_AUTH_MAX_REALM_LEN`|64|
 
-For Arduino IDE, install `Preferences` via the Library Manager.
+`HTTP_DIGEST_AUTH_MUTEX_TIMEOUT` only takes effect on ESP32; ESP8266 and AVR
+are single-threaded, so their lock is a no-op and the timeout is ignored.
 
-### AVR MD5 and persistent storage
+`JSON_LEN` is computed automatically from these lengths, so it does not need
+to be configured separately.
 
-Add the dependency to your `platformio.ini`:
+### Where to define these
 
-```ini
-lib_deps =
-    soosp/HttpDigestAuth
-    soosp/EEPROMPreferences
-    akkoyun/MD5
-```
+The macros set **fixed buffer sizes**, so **every translation unit that
+includes a library header must see the same value**. In a single-file sketch,
+define them before the first `#include`. In a multi-file project they must be
+defined *globally* — otherwise the differing buffer sizes across `.cpp` files
+cause an ODR violation (undefined behaviour).
 
-For Arduino IDE, install `EEPROMPreferences` via the Library Manager and
-install [`MD5`](https://github.com/akkoyun/MD5) by downloading ZIP file
-and extract it to the Arduino `libraries` directory.
+- **PlatformIO** (all platforms) — in `platformio.ini`:
+
+  ```ini
+  build_flags =
+      -D HTTP_DIGEST_AUTH_MAX_USER_LEN=32
+      -D HTTP_DIGEST_AUTH_MAX_PASSWORD_LEN=128
+  ```
+
+- **Arduino IDE, ESP32** — add a file named `build_opt.h` in the sketch folder.
+  The core passes it to the compiler as a response file for **every**
+  translation unit, so it holds **compiler flags**, not `#define`s (despite the
+  `.h` name):
+
+  ```txt
+  -DHTTP_DIGEST_AUTH_MAX_USER_LEN=32
+  ```
+
+> Defining a macro before the include in only your `.ino` affects **that file
+> only** — other `.cpp` files use the defaults. That mismatch is the multi-TU
+> pitfall the global methods above avoid.
+
+### Memory considerations
+
+The field lengths determine fixed buffer sizes. Beyond the four `char` members
+of each instance, the largest transient allocation is a stack buffer in the
+internal MD5 helper, sized roughly `MAX_USER_LEN + MAX_REALM_LEN +
+MAX_PASSWORD_LEN`. Increasing these macros raises both the per-instance
+footprint and that temporary stack usage. On AVR, where RAM is scarce
+(e.g. 2 KB on an ATmega328), keep the lengths conservative to avoid stack
+overflow.
 
 ## License
 
