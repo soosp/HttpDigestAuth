@@ -212,6 +212,24 @@ footprint and that temporary stack usage. On AVR, where RAM is scarce
 (e.g. 2 KB on an ATmega328), keep the lengths conservative to avoid stack
 overflow.
 
+## Character encoding
+
+The credential fields are recommended to be **ASCII**. Two reasons:
+
+- **Length limits are in bytes, not characters.** A UTF-8 accented character
+  takes 2–4 bytes, so `MAX_USER_LEN = 16` may hold fewer than 16 such
+  characters. Truncation happens at the byte level and can cut a multi-byte
+  character in half, leaving an invalid UTF-8 sequence in the buffer.
+- **Hash agreement across client and server is not guaranteed.** MD5 hashes
+  the raw bytes, so the result depends on the exact encoding and Unicode
+  normalization (e.g. NFC vs NFD) of the input. A client that normalizes or
+  encodes differently produces a different hash for the "same" password, and
+  authentication fails. RFC 7616 added a `charset="UTF-8"` parameter to address
+  this, but client support varies.
+
+For interoperable Digest Authentication, keep usernames, realms and passwords
+within ASCII.
+
 ## License
 
 MIT License — Copyright (c) 2026 Péter Soós
