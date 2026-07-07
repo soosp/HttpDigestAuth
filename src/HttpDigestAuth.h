@@ -34,7 +34,7 @@
  *
  * Platform support:
  *   - ESP32 (FreeRTOS): uses SemaphoreHandle_t
- *   - ESP8266: single-threaded, no mutex is needed
+ *   - ESP8266 and AVR: single-threaded, no mutex is needed
  */
 class HttpDigestAuth {
   class Helpers {

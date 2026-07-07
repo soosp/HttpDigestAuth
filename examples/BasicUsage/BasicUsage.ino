@@ -3,10 +3,10 @@
  *
  * Demonstrates basic usage of the HttpDigestAuth library:
  *   - Default and custom credentials
- *   - Saving and restoring credentials to/from flash
+ *   - Saving and restoring credentials to/from persistent storage
  *   - Verifying the restored hash against the expected value
  *   - JSON output
- *   - Clearing saved data from flash
+ *   - Clearing saved data from persistent storage
  *
  * Expected serial output at 115200 baud.
  */
@@ -33,7 +33,7 @@ void printCredentials(const char* label) {
   auth.getHash(hash, sizeof(hash));
   auth.toJson(json, sizeof(json));
 
-  Serial.print("\n--- "); Serial.println(label); Serial.println(" ---");
+  Serial.print("\n--- "); Serial.print(label); Serial.println(" ---");
   Serial.print("User:  "); Serial.println(user);
   Serial.print("Realm: "); Serial.println(realm);
   Serial.print("Hash:  "); Serial.println(hash);
@@ -44,20 +44,22 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
 
+  Serial.println("--- HttpDigestAuth basic example ---\n");
+
   // 1. Default credentials: admin / local / admin
   printCredentials("Default credentials");
   Serial.print("\nExpected hash: "); Serial.println(EXPECTED_HASH1);
 
-  // 2. Save to flash, then change credentials in memory
+  // 2. Save to persistent storage, then change credentials in memory
   if (!auth.save()) {
-    Serial.println("\nSave to flash has failed.");
+    Serial.println("\nSave to persistent storage has failed.");
   } else {
     auth.setCredentials("user2", "myrealm", "password2");
     printCredentials("After setCredentials()");
     Serial.print("\nExpected hash: "); Serial.println(EXPECTED_HASH2);
-    // 3. Restore from flash – should match the default credentials again
+    // 3. Restore from persistent storage – should match the default credentials again
     if (!auth.restore()) {
-        Serial.println("\nRestore from flash has failed.");
+        Serial.println("\nRestore from persistent storage has failed.");
     } else {
         printCredentials("After restore()");
         Serial.print("\nExpected hash: "); Serial.println(EXPECTED_HASH1);
@@ -72,11 +74,11 @@ void setup() {
     }
   }
 
-  // 4. Clean up: remove saved data from flash
+  // 4. Clean up: remove saved data from persistent storage
   if (auth.clear()) {
-    Serial.println("\nFlash cleared.");
+    Serial.println("\nPersistent storage cleared.");
   } else {
-    Serial.println("\nFlash clearing failed.");
+    Serial.println("\nPersistent storage clearing failed.");
   }
 }
 
