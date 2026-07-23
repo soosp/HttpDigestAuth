@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### [0.4.0]
+- Fix typos in `CHANGELOG.md`.
+
+## [0.4.0]
 
 ### Added
 
@@ -20,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - **API change:** `JSON_LEN` is now computed from the field lengths plus a
   structural overhead and reserve, instead of being configured directly.
   Removed the `HTTP_DIGEST_AUTH_MAX_JSON_LEN` macro.
-- Complete the the AVR platform related changes in comments and example.
+- Complete the AVR platform related changes in comments and example.
 
 ## [0.3.1]
 
