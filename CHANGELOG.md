@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- refactor: Replace bitwise AND (`&=`) with logical AND (`&&`) to avoid implicit
+  bool-to-int conversions and clarify boolean logic intent.
+
+### Fixed
+
 - Fix typos in `CHANGELOG.md`.
 
 ## [0.4.0]

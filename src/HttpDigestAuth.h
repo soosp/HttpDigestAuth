@@ -246,22 +246,22 @@ public:
 
     // JSON starts
     json[0] = '\0';
-    ok &= _strncatJson(json, "{", len);
+    ok = ok && _strncatJson(json, "{", len);
     // Start using private variables
     if (!_lock()) return false;
     // Username
     snprintf(buffer, bs, "\"user\":\"%s\",", _user);
-    ok &= _strncatJson(json, buffer, len);
+    ok = ok && _strncatJson(json, buffer, len);
     // Realm
     snprintf(buffer, bs, "\"realm\":\"%s\",", _realm);
-    ok &= _strncatJson(json, buffer, len);
+    ok = ok && _strncatJson(json, buffer, len);
     // MD5
     snprintf(buffer, bs, "\"md5\":\"%s\"", _md5);
     // End of using private variables
     _unlock();
-    ok &= _strncatJson(json, buffer, len);
+    ok = ok && _strncatJson(json, buffer, len);
     // JSON ends
-    ok &= _strncatJson(json, "}", len);
+    ok = ok && _strncatJson(json, "}", len);
     return ok;
   }
 
@@ -271,19 +271,18 @@ public:
    * @return true on success, false otherwise
    */
   bool save(const char* ns = "auth") {
-    bool retval = false;
     if (!_lock()) return false;
     Prefs p;
-    retval = p.begin(ns, _RW_MODE);
-    if (retval) {
-      retval &= (p.putString("user", _user) > 0) ;
-      retval &= (p.putString("realm", _realm) > 0);
-      retval &= (p.putString("md5", _md5) > 0);
-      retval &= (p.putBool("isInitialized", true) > 0);
+    bool ok = p.begin(ns, _RW_MODE);
+    if (ok) {
+      ok = (p.putString("user", _user) > 0)       && ok;
+      ok = (p.putString("realm", _realm) > 0)     && ok;
+      ok = (p.putString("md5", _md5) > 0)         && ok;
+      ok = (p.putBool("isInitialized", true) > 0) && ok;
       p.end();
     }
     _unlock();
-    return retval;
+    return ok;
   }
 
   /**
@@ -292,14 +291,13 @@ public:
    * @return true on success, false otherwise
    */
   bool restore(const char* ns = "auth") {
-    bool retval = false;
     if (!_lock()) return false;
     Prefs p;
-    retval = (p.begin(ns, _RO_MODE));
-    if (retval) {
+    bool ok = (p.begin(ns, _RO_MODE));
+    if (ok) {
       // Load already saved data
-      retval = p.isKey("isInitialized");
-      if (retval) {
+      ok = p.isKey("isInitialized");
+      if (ok) {
         p.getString("user", _user, MAX_USER_SIZE);
         p.getString("realm", _realm, MAX_REALM_SIZE);
         p.getString("md5", _md5, MD5_HASH_SIZE);
@@ -307,7 +305,7 @@ public:
       p.end();
     }
     _unlock();
-    return retval;
+    return ok;
   }
 
   /**
@@ -316,16 +314,15 @@ public:
    * @return true on success, false otherwise
    */  
   bool clear(const char* ns = "auth") {
-    bool retval = false;
     if (!_lock()) return false;
     Prefs p;
-    retval = (p.begin(ns, _RW_MODE));
-    if (retval) {
+    bool ok = (p.begin(ns, _RW_MODE));
+    if (ok) {
       p.clear();
       p.end();
     }
     _unlock();
-    return retval;
+    return ok;
   }
 
 
