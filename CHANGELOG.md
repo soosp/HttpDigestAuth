@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-16
+
 ### Changed
 
 - refactor: Replace bitwise AND (`&=`) with logical AND (`&&`) to avoid implicit
@@ -86,7 +88,8 @@ All notable changes to this project will be documented in this file.
 
 - First public release
 
-[unreleased]: https://github.com/soosp/HttpDigestAuth/compare/0.4.0...HEAD
+[unreleased]: https://github.com/soosp/HttpDigestAuth/compare/0.4.1...HEAD
+[0.4.1]: https://github.com/soosp/HttpDigestAuth/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/soosp/HttpDigestAuth/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/soosp/HttpDigestAuth/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/soosp/HttpDigestAuth/compare/0.2.0...0.3.0
