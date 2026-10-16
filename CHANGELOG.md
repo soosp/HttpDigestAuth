@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fix typos in `CHANGELOG.md`.
+- Fix assert about thread-safety in `README.md`.
 
 ## [0.4.0]
 

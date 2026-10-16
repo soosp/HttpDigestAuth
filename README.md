@@ -1,7 +1,7 @@
 # HttpDigestAuth
 
-Thread-safe helper class for HTTP Digest Authentication on ESP32, ESP8266
-and AVR Arduino platforms.
+Helper class for HTTP Digest Authentication on ESP32, ESP8266
+and AVR Arduino platforms. Thread-safe on ESP32.
 
 Stores the username, realm, password and the corresponding MD5 hash in the
 format required by HTTP Digest Auth: `md5("user:realm:password")`.
